@@ -3,94 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools AI Auto - LongCa (v121 Fix 400 Logic)</title>
+    <title>Tools AI Auto - LongCa (v122 Vercel Native)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* GIỮ NGUYÊN GIAO DIỆN V85 CŨ CỦA BẠN */
-        body { font-family: 'Roboto', sans-serif; padding: 30px 20px; text-align: center; background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%); min-height: 100vh; }
-        .box { background: white; padding: 30px; border-radius: 20px; max-width: 650px; margin: 0 auto; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 1px solid #fff; }
-        h2 { color: #0277bd; margin: 0; text-transform: uppercase; font-weight: 900; font-size: 22px; letter-spacing: 1px; }
-        h3.brand-title { margin: 5px 0 10px 0; font-size: 26px; font-weight: 900; background: -webkit-linear-gradient(45deg, #d84315, #ff6f00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
-        .copyright-header { font-size: 11px; color: #90a4ae; font-weight: 500; margin-bottom: 25px; letter-spacing: 0.5px; border-bottom: 1px dashed #eceff1; padding-bottom: 15px; }
-        .copyright-header span { color: #0277bd; font-weight: bold; }
-        .haravan-config { background: #fff8e1; padding: 15px; border-radius: 10px; border: 1px solid #ffe0b2; margin-bottom: 20px; text-align: left; }
-        .haravan-config input { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ffcc80; border-radius: 6px; box-sizing: border-box; font-size: 13px; }
-        .upload-area { border: 2px dashed #4fc3f7; padding: 20px; background: #e1f5fe; border-radius: 12px; margin-bottom: 20px; cursor: pointer; transition: all 0.3s ease; }
-        .upload-area:hover { background: #b3e5fc; border-color: #0288d1; }
-        .upload-text { font-weight: bold; color: #0277bd; font-size: 16px; }
-        .user-list { text-align: left; margin-bottom: 25px; }
-        .user-list-title { font-weight: bold; color: #546e7a; margin-bottom: 10px; font-size: 13px; text-transform: uppercase; }
-        .user-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .user-item { display: flex; align-items: center; padding: 10px; border-radius: 8px; background: #fafafa; border: 1px solid #eceff1; transition: 0.2s; cursor: pointer; }
+        body { font-family: 'Roboto', sans-serif; padding: 20px; background: #f0f2f5; height: 100vh; box-sizing: border-box; overflow-y: auto; }
+        .main-container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; height: calc(100vh - 40px); }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; display: flex; flex-direction: column; }
+        h2 { color: #0277bd; margin: 0 0 5px 0; font-weight: 900; font-size: 18px; text-transform: uppercase; }
+        h3.brand-title { margin: 0 0 15px 0; font-size: 14px; color: #78909c; font-weight: 500; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { font-size: 12px; font-weight: bold; color: #455a64; display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #cfd8dc; border-radius: 6px; font-size: 13px; box-sizing: border-box; }
+        .upload-compact { display: flex; align-items: center; justify-content: space-between; background: #e1f5fe; border: 1px dashed #0288d1; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; transition: 0.2s; }
+        .upload-compact:hover { background: #b3e5fc; }
+        .upload-compact span { font-weight: bold; color: #0277bd; font-size: 13px; }
+        .file-status { font-size: 12px; color: #546e7a; font-style: italic; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-bottom: 15px; }
+        .user-item { display: flex; align-items: center; padding: 8px; border-radius: 6px; background: #fafafa; border: 1px solid #eceff1; cursor: pointer; transition: 0.2s; }
         .user-item:hover { background: #e3f2fd; border-color: #90caf9; }
-        .user-item.select-all-box { background: #e0f2f1; border-color: #80cbc4; }
-        .user-item input { margin-right: 10px; transform: scale(1.3); cursor: pointer; accent-color: #0277bd; }
-        .user-item label { cursor: pointer; color: #455a64; font-size: 14px; font-weight: 500; width: 100%;}
-        .action-area { display: flex; flex-direction: column; gap: 15px; }
-        .sync-group { display: flex; gap: 15px; }
-        .download-group { display: flex; gap: 15px; border-top: 1px dashed #cfd8dc; padding-top: 15px; margin-top: 5px;}
-        button { flex: 1; padding: 15px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; border: none; color: white; transition: all 0.2s; text-transform: uppercase; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .user-item input { margin-right: 8px; transform: scale(1.2); cursor: pointer; }
+        .user-item label { cursor: pointer; font-size: 13px; font-weight: 500; width: 100%; }
+        .select-all { background: #e0f2f1; border-color: #80cbc4; }
+        .action-row { display: flex; gap: 10px; margin-top: auto; }
+        button { flex: 1; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; border: none; color: white; text-transform: uppercase; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
         button:active { transform: translateY(1px); }
-        .btn-sync-si { background: linear-gradient(45deg, #ff6f00, #ff8f00); } 
-        .btn-sync-le { background: linear-gradient(45deg, #2e7d32, #43a047); } 
-        .btn-dl { background: linear-gradient(45deg, #546e7a, #78909c); font-size: 12px; padding: 12px;}
-        button:disabled { background: #cfd8dc; transform: none; box-shadow: none; cursor: wait;}
-        .note-small { font-size: 10px; color: rgba(255,255,255,0.9); margin-top: 2px; font-weight: normal; text-transform: none; }
-        .update-note { font-size: 10px; color: #b0bec5; margin-top: 15px; font-style: italic; }
+        button:disabled { background: #cfd8dc !important; cursor: not-allowed; transform: none; }
+        .btn-si { background: linear-gradient(45deg, #ff6f00, #ff8f00); } 
+        .btn-le { background: linear-gradient(45deg, #2e7d32, #43a047); } 
+        .btn-dl { background: #607d8b; width: 40px; flex: none; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .progress-container { width: 100%; background: #e0e0e0; height: 6px; border-radius: 3px; margin: 10px 0; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: #4caf50; transition: width 0.3s; }
+        .log-console { background: #263238; color: #eceff1; font-family: monospace; font-size: 11px; padding: 10px; border-radius: 8px; flex: 1; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; border: 1px solid #455a64; min-height: 100px; }
+        .checkbox-row { display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 12px; color: #37474f; cursor: pointer; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; } ::-webkit-scrollbar-thumb { background: #cfd8dc; border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: #90a4ae; }
     </style>
 </head>
 <body>
 
-    <div class="box">
-        <h2>TOOLS AI XỬ LÝ TỰ ĐỘNG 100%</h2>
-        <h3 class="brand-title">BẢNG GIÁ HẢI SẢN KỲ HÀ</h3>
-        <div class="copyright-header">Tools AI Xử lý Bảng Giá By <span>LongCa</span></div>
-
-        <div class="haravan-config">
-            <div style="font-weight:bold; color:#e65100; font-size:12px;">🔑 TOKEN API HARAVAN</div>
-            <input type="password" id="haravan_token" placeholder="Dán Token vào đây...">
-        </div>
+<div class="main-container">
+    
+    <div class="card">
+        <h2>TOOLS AI AUTO</h2>
+        <h3 class="brand-title">v122 - Vercel Native</h3>
         
-        <div class="upload-area" onclick="document.getElementById('upload').click()">
-            <div class="upload-text">📂 CHỌN FILE EXCEL</div>
-            <input type="file" id="upload" accept=".xlsx, .xls" style="display:none" />
-            <div id="file-name" style="font-size:13px; color:#546e7a; margin-top: 5px;">(Chưa chọn file)</div>
+        <div class="form-group">
+            <label class="form-label">🔑 HARAVAN TOKEN:</label>
+            <input type="password" id="haravan_token" placeholder="Dán Token API vào đây...">
         </div>
 
-        <div class="user-list">
-            <div class="user-list-title">👤 CHỌN TÊN CẦN XỬ LÝ:</div>
-            <div class="user-grid" id="employee-container">
-                <div class="user-item select-all-box">
-                    <input type="checkbox" id="check-all" onclick="toggleAll(this)">
-                    <label for="check-all" style="color:#00695c; font-weight:bold;">✅ CHỌN TẤT CẢ</label>
-                </div>
-            </div>
+        <div style="border-top: 1px dashed #eee; margin: 10px 0;"></div>
+
+        <div class="form-group">
+            <label class="form-label" style="color:#d32f2f;">📝 NỘI DUNG GHI CHÚ (Hiện cạnh giờ):</label>
+            <input type="text" id="update_note" placeholder="VD: Hàng mới về, Giá giảm sốc..." style="border-color:#ef9a9a; color:#c62828; font-weight:bold;">
+            <div style="font-size:10px; color:#90a4ae; margin-top:3px;">(Để trống nếu không cần ghi chú thêm)</div>
         </div>
 
-        <div class="action-area">
-            <div class="sync-group">
-                <button class="btn-sync-si" id="btn-sync-si" onclick="processSync('wholesale')">
-                    ⚡ Up Giá Sỉ
-                    <div class="note-small">(Tự động theo tên đã chọn)</div>
-                </button>
-                <button class="btn-sync-le" id="btn-sync-le" onclick="processSync('retail')">
-                    🌐 Up Giá Lẻ
-                    <div class="note-small">(Tự động theo tên đã chọn)</div>
-                </button>
-            </div>
-            <div class="download-group">
-                <button class="btn-dl" onclick="processDownload('wholesale')">💾 Tải file SỈ</button>
-                <button class="btn-dl" onclick="processDownload('retail')">💾 Tải file LẺ</button>
-            </div>
+        <div class="form-group">
+            <label class="form-label">🎨 TÙY CHỈNH KHÁC:</label>
+            <label class="checkbox-row">
+                <input type="checkbox" id="hide_sticky_menu"> 🚫 Tắt Chế Độ Dính (Sticky)
+            </label>
+            <div style="font-size:10px; color:#78909c; margin-left: 18px;">(Mặc định: Dính Ngày/Giờ + Nội dung)</div>
         </div>
-        
-        <div class="update-note">Update v121: Fix Error 400 (Missing Title Logic)</div>
+
+        <div style="margin-top:auto; font-size: 10px; color: #b0bec5; text-align: center;">
+            Dev by LongCa
+        </div>
     </div>
+
+    <div class="card">
+        <div class="upload-compact" onclick="document.getElementById('upload').click()">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:18px">📂</span>
+                <span>CHỌN FILE EXCEL</span>
+            </div>
+            <div id="file-name" class="file-status">(Chưa chọn file)</div>
+            <input type="file" id="upload" accept=".xlsx, .xls" style="display:none" />
+        </div>
+
+        <div class="user-grid" id="employee-container">
+            <div class="user-item select-all">
+                <input type="checkbox" id="check-all" onclick="toggleAll(this)">
+                <label for="check-all" style="font-weight:bold; color:#00695c;">CHỌN TẤT CẢ</label>
+            </div>
+        </div>
+
+        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="log-console" id="log-console">Sẵn sàng...</div>
+
+        <div class="action-row" style="margin-top: 15px;">
+            <button class="btn-si" id="btn-sync-si" onclick="processSync('wholesale')">⚡ UP GIÁ SỈ</button>
+            <button class="btn-le" id="btn-sync-le" onclick="processSync('retail')">🌐 UP GIÁ LẺ</button>
+            <button class="btn-dl" onclick="processDownload('wholesale')" title="Tải file SỈ dự phòng">💾 S</button>
+            <button class="btn-dl" onclick="processDownload('retail')" title="Tải file LẺ dự phòng">💾 L</button>
+        </div>
+    </div>
+</div>
 
 <script>
     const HARAVAN_IDS = {
@@ -121,10 +135,10 @@
     };
     
     const FOOTER_CONTACTS = [
-        { name: "Dương", phone: "0705777131" },
-        { name: "Hằng",  phone: "0789698989" },
-        { name: "Duyên", phone: "0937888155" },
-        { name: "Chi",   phone: "0936111846" }
+        { name: "Dương", phone: "0705777131", initial: "D" },
+        { name: "Hằng",  phone: "0789698989", initial: "H" },
+        { name: "Duyên", phone: "0937888155", initial: "D" },
+        { name: "Chi",   phone: "0936111846", initial: "C" }
     ];
 
     const CONFIG = {
@@ -144,17 +158,31 @@
         container.appendChild(div);
     });
 
+    function getCurrentTimeStr() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        return `${hours}:${minutes} ngày ${day}/${month}/${year}`;
+    }
+
+    function log(msg, type='info') {
+        const consoleEl = document.getElementById('log-console');
+        const time = new Date().toLocaleTimeString();
+        let color = '#eceff1';
+        if(type === 'success') color = '#69f0ae';
+        if(type === 'error') color = '#ff5252';
+        if(type === 'warn') color = '#ffd740';
+        consoleEl.innerHTML += `<div style="color:${color}">[${time}] ${msg}</div>`;
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
     document.getElementById('upload').addEventListener('change', function(){
-        const name = this.files[0] ? this.files[0].name : "";
-        const label = document.getElementById('file-name');
-        if(name) {
-            label.innerText = "File: " + name;
-            label.style.color = "#2e7d32";
-            label.style.fontWeight = "bold";
-        } else {
-            label.innerText = "(Chưa chọn file)";
-            label.style.color = "#546e7a";
-        }
+        const name = this.files[0] ? this.files[0].name : "(Chưa chọn file)";
+        document.getElementById('file-name').innerText = name;
+        if(this.files[0]) document.getElementById('file-name').style.color = "#0277bd";
     });
 
     function toggleAll(source) {
@@ -214,40 +242,66 @@
         return groups;
     }
 
-    function generateHTMLFinal(g, emp, mode) {
-        const tableStyle = (mode === 'retail') ? "width:100%; border-collapse:collapse;" : "width:100%; border-collapse:collapse; min-width:800px;";
+    function generateHTMLFinal(g, emp, mode, dateStr, extraConfig) {
         const headerColor = (mode === 'retail') ? '#e65100' : '#0056b3';
+        const phoneColor = (mode === 'retail') ? '#e65100' : '#0068ff';
+
+        const tableStyle = (mode === 'retail') ? "width:100%; border-collapse:collapse;" : "width:100%; border-collapse:collapse; min-width:800px;";
         const thStyle = `background:${headerColor}; color:white; padding:8px; border:1px solid #ccc; text-align:center; white-space:nowrap;`;
         const tdStyle = "padding:8px; border:1px solid #ccc; text-align:center; color:#333; vertical-align: middle;";
         let nameTdStyle = (mode === 'retail') ? "padding:8px; border:1px solid #ccc; text-align:left; font-weight:bold; vertical-align: middle;" 
             : "padding:8px; border:1px solid #ccc; text-align:left; font-weight:bold; min-width:150px; position:sticky; left:0; background:white; z-index:10; border-right:2px solid #ddd; vertical-align: middle;";
         
-        const note = `<div style="padding:10px; font-size:12px; color:#666; font-style:italic;">⚠️ Giá tham khảo (99%). Liên hệ Sales để cập nhật giá chuẩn nhất.</div>`;
-        
+        let extraNoteHTML = "";
+        if(extraConfig.noteContent) {
+            extraNoteHTML = `<span style="color:#d32f2f; margin-left:10px; font-weight:bold;">📢 ${extraConfig.noteContent}</span>`;
+        }
+
+        const topStaticContent = `
+        <div style="padding:10px 10px 5px 10px; text-align:center; background:white;">
+            <div style="color:#d32f2f; font-weight:900; font-size:15px; text-transform:uppercase; margin-bottom:5px; border: 2px dashed #d32f2f; padding: 5px 10px; display:inline-block; border-radius:8px; background:#ffebee;">
+                KHÁCH HÀNG CẦN SỐ LƯỢNG LỚN VUI LÒNG LIÊN HỆ TRỰC TIẾP
+            </div>
+        </div>`;
+
+        let stickyStyle = extraConfig.hideSticky ? "" : "position:sticky; top:0; z-index:1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);";
+        const stickyContent = `
+        <div style="${stickyStyle} background:white; border-bottom:1px solid #eee;">
+            <div style="font-size:13px; color:#455a64; font-weight:500; text-align:center; padding:8px; background:#fff8e1; border-bottom:1px dashed #eee;">
+                🕒 Cập nhật: <span style="color:#0277bd; font-weight:bold;">${dateStr}</span>${extraNoteHTML}
+            </div>
+        </div>
+        `;
+
+        const subNote = `
+        <div style="text-align:center; padding:5px; background:white;">
+            <div style="font-size:11px; color:#78909c; font-style:italic;">⚠️ Giá tham khảo (99%). Liên hệ Sales để có giá chuẩn nhất.</div>
+        </div>
+        `;
+
         let zaloButtonHTML = "";
         const zaloIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png";
-        const zaloColor = (mode === 'retail') ? '#e65100' : '#0068ff';
-        const phoneColor = (mode === 'retail') ? '#e65100' : '#0068ff';
-
+        
         if (emp.type === "general") {
             const items = FOOTER_CONTACTS.map((c, index) => {
                 const borderStyle = index < FOOTER_CONTACTS.length - 1 ? "border-right: 1px solid #e0e0e0;" : "";
-                return `<a href="https://zalo.me/${c.phone}" target="_blank" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-decoration:none; color:#333; padding:8px 0; ${borderStyle}"><img src="${zaloIconUrl}" style="width:24px; height:24px; margin-bottom:4px;"><span style="font-size:11px; font-weight:bold; color:${phoneColor};">${c.name}</span></a>`;
+                return `
+                <a href="https://zalo.me/${c.phone}" target="_blank" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-decoration:none; color:#333; padding:2px 0; ${borderStyle} height:35px;">
+                    <img src="${zaloIconUrl}" style="width:16px; height:16px; margin-bottom:1px;">
+                    <span style="font-size:9px; font-weight:bold; color:${phoneColor};">${c.name}</span>
+                </a>`;
             }).join('');
-            zaloButtonHTML = `<div style="position:fixed !important; bottom:0 !important; left:0 !important; width:100% !important; height:60px; background:white; border-top:1px solid #ccc; box-shadow:0 -2px 10px rgba(0,0,0,0.1); z-index:2147483647 !important; display:flex; justify-content:space-around; align-items:center;">${items}</div>`;
+
+            zaloButtonHTML = `
+                <div style="position:fixed !important; bottom:0 !important; left:0 !important; width:100% !important; height:35px; background:white; border-top:1px solid #ccc; box-shadow:0 -2px 10px rgba(0,0,0,0.1); z-index:2147483647 !important; display:flex; justify-content:space-around; align-items:center;">
+                    ${items}
+                </div>
+            `;
         } else {
             const zInfo = ZALO_INFO[emp.id];
-            zaloButtonHTML = `<a href="https://zalo.me/${zInfo.phone}" target="_blank" style="position:fixed !important; bottom:20px !important; right:20px !important; z-index:2147483647 !important; display:flex; align-items:center; background:${zaloColor}; color:white; padding:10px 20px; border-radius:30px; text-decoration:none; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-weight:bold; font-family:sans-serif; border: 2px solid white;"><img src="${zaloIconUrl}" style="width:24px; height:24px; margin-right:8px; filter: brightness(0) invert(1);"> Chat Zalo: ${zInfo.zLabel}</a>`;
+            const btnColor = (mode === 'retail') ? '#e65100' : '#0068ff';
+            zaloButtonHTML = `<a href="https://zalo.me/${zInfo.phone}" target="_blank" style="position:fixed !important; bottom:20px !important; right:20px !important; z-index:2147483647 !important; display:flex; align-items:center; background:${btnColor}; color:white; padding:8px 15px; border-radius:30px; text-decoration:none; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-weight:bold; font-family:sans-serif; border: 2px solid white;"><img src="${zaloIconUrl}" style="width:20px; height:20px; margin-right:8px; filter: brightness(0) invert(1);"> Chat Zalo: ${zInfo.zLabel}</a>`;
         }
-        
-        const swipeText = (mode === 'retail') ? '' : `<div style="font-size:12px; font-weight:bold; color:#d32f2f; font-style:italic; margin-bottom:5px; text-align:center;">⬅️ Vui lòng vuốt sang trái để xem thêm các bảng giá khác</div>`;
-        let menuItems = [];
-        if(g.sashimi.length) menuItems.push(`<a href="#sashimi" style="padding:6px 12px; background:#f1f3f4; border-radius:15px; color:#333; text-decoration:none; font-size:13px; white-space:nowrap; font-weight:bold;">🍣 Sashimi</a>`);
-        if(g.seafood.length) menuItems.push(`<a href="#haisan" style="padding:6px 12px; background:#f1f3f4; border-radius:15px; color:#333; text-decoration:none; font-size:13px; white-space:nowrap; font-weight:bold;">🦀 Hải Sản</a>`);
-        if(g.meat.length) menuItems.push(`<a href="#thit" style="padding:6px 12px; background:#f1f3f4; border-radius:15px; color:#333; text-decoration:none; font-size:13px; white-space:nowrap; font-weight:bold;">🥩 Thịt</a>`);
-        if(g.other.length) menuItems.push(`<a href="#khac" style="padding:6px 12px; background:#f1f3f4; border-radius:15px; color:#333; text-decoration:none; font-size:13px; white-space:nowrap; font-weight:bold;">🥬 Khác</a>`);
-        
-        const stickyHeader = `<div style="position:sticky; top:0; left:0; right:0; background:white; z-index:1000; border-bottom:1px solid #eee; padding:10px 10px 5px 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">${swipeText}<div style="display:flex; gap:5px; overflow-x:auto; padding-bottom:5px;">${menuItems.join('')}</div></div>`;
 
         let h = "", r = null;
         if (mode === 'retail') {
@@ -263,16 +317,26 @@
                 return `<tr><td style="${nameTdStyle}">${i.name}${linkHtml}</td><td style="${tdStyle}">${i.vat10}</td><td style="${tdStyle}">${i.hkd10}</td><td style="${tdStyle}">${i.vat50}</td><td style="${tdStyle}">${i.hkd50}</td><td style="${tdStyle}">${i.ctv}</td><td style="${tdStyle}">${i.retail}</td></tr>`;
             }).join('');
         }
-        const section = (id, title, data) => data.length ? `<div id="${id}" style="background:#f4f6f8; color:${headerColor}; padding:10px; font-weight:bold; margin:20px 0 5px 0; border-left:4px solid ${headerColor}; scroll-margin-top: 90px;">${title}</div><div style="width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;"><table style="${tableStyle}">${h}<tbody>${r(data)}</tbody></table></div>` : '';
         
-        return `<div id="pricing-tool-wrapper" style="font-family:Arial, sans-serif; padding-bottom: 60px;">${note}${stickyHeader}${section('sashimi', 'SASHIMI & SUSHI', g.sashimi)}${section('haisan', 'HẢI SẢN', g.seafood)}${section('thit', 'THỊT', g.meat)}${section('khac', 'KHÁC', g.other)}${zaloButtonHTML}</div>`;
+        const section = (id, title, data) => data.length ? `<div id="${id}" style="background:#f4f6f8; color:${headerColor}; padding:10px; font-weight:bold; margin:20px 0 5px 0; border-left:4px solid ${headerColor}; scroll-margin-top: 50px;">${title}</div><div style="width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;"><table style="${tableStyle}">${h}<tbody>${r(data)}</tbody></table></div>` : '';
+        
+        return `<div id="pricing-tool-wrapper" style="font-family:Arial, sans-serif; padding-bottom: 60px;">
+            ${topStaticContent}
+            ${stickyContent}
+            ${subNote}
+            ${section('sashimi', 'SASHIMI & SUSHI', g.sashimi)}
+            ${section('haisan', 'HẢI SẢN', g.seafood)}
+            ${section('thit', 'THỊT', g.meat)}
+            ${section('khac', 'KHÁC', g.other)}
+            ${zaloButtonHTML}
+        </div>`;
     }
 
     async function processDownload(mode) { handleProcess('download', mode); }
     async function processSync(mode) {
         const selected = document.querySelectorAll('.emp-check:checked');
         if(selected.length === 0) { alert('⚠️ Vui lòng chọn ít nhất 1 người!'); return; }
-        if(confirm(`⚠️ BẠN SẮP CẬP NHẬT CHO ${selected.length} NGƯỜI?\n\nChế độ: ${mode === 'wholesale' ? 'GIÁ SỈ' : 'GIÁ LẺ'}.\nDữ liệu trên Web sẽ bị ghi đè.`)) {
+        if(confirm(`⚠️ BẠN SẮP CẬP NHẬT CHO ${selected.length} NGƯỜI?\nDữ liệu trên Web sẽ bị ghi đè.`)) {
             handleProcess('sync', mode);
         }
     }
@@ -282,6 +346,12 @@
     async function handleProcess(actionType, mode) {
         const fileInput = document.getElementById('upload');
         const selectedChecks = Array.from(document.querySelectorAll('.emp-check:checked'));
+        const progressBar = document.getElementById('progress-bar');
+        
+        const extraConfig = {
+            noteContent: document.getElementById('update_note').value.trim(),
+            hideSticky: document.getElementById('hide_sticky_menu').checked
+        };
 
         if (!fileInput.files.length) { alert('⚠️ Vui lòng chọn file Excel!'); return; }
         if (selectedChecks.length === 0) { alert('⚠️ Vui lòng chọn nhân viên!'); return; }
@@ -291,9 +361,12 @@
         if(btnId) {
             var btn = document.getElementById(btnId);
             var originalText = btn.innerHTML;
-            btn.innerHTML = "⏳ ĐANG KHỞI ĐỘNG...";
+            btn.innerHTML = "⏳ RUNNING...";
             btn.disabled = true;
         }
+
+        log("=== BẮT ĐẦU XỬ LÝ ===");
+        progressBar.style.width = '0%';
 
         const reader = new FileReader();
         reader.onload = async function(e) {
@@ -301,32 +374,38 @@
                 const workbook = XLSX.read(e.target.result, {type: 'array'});
                 const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {defval: ""});
                 const processedGroups = processData(jsonData);
+                
+                const staticDateStr = getCurrentTimeStr();
+                log(`Thời gian bản tin: ${staticDateStr}`);
 
                 if (actionType === 'download') {
                     if(selectedChecks.length === 1) {
                          const empId = selectedChecks[0].value;
                          const emp = EMPLOYEES.find(e => e.id === empId);
-                         const content = generateHTMLFinal(processedGroups, emp, mode);
+                         const content = generateHTMLFinal(processedGroups, emp, mode, staticDateStr, extraConfig);
                          const fullHtml = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bảng Giá</title></head><body>${content}</body></html>`;
                          const fileName = `Bang_Gia_${mode === 'wholesale' ? 'SI' : 'LE'}_${emp.name}.html`;
                          saveAs(new Blob([fullHtml], {type: "text/html;charset=utf-8"}), fileName);
+                         log("Đã tải file thành công!", 'success');
                     } else {
                          const zip = new JSZip();
                          selectedChecks.forEach(chk => {
                              const empId = chk.value;
                              const emp = EMPLOYEES.find(e => e.id === empId);
-                             const content = generateHTMLFinal(processedGroups, emp, mode);
+                             const content = generateHTMLFinal(processedGroups, emp, mode, staticDateStr, extraConfig);
                              const fullHtml = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bảng Giá</title></head><body>${content}</body></html>`;
                              zip.file(`Bang_Gia_${mode === 'wholesale' ? 'SI' : 'LE'}_${emp.name}.html`, fullHtml);
                          });
                          saveAs(await zip.generateAsync({type:"blob"}), `Bang_Gia_${mode === 'wholesale' ? 'SI' : 'LE'}_All.zip`);
+                         log("Đã tải file ZIP thành công!", 'success');
                     }
                 } else {
                     const token = document.getElementById('haravan_token').value.trim();
                     if (!token) throw new Error("Vui lòng nhập Token API!");
                     
-                    const isNetlify = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('vercel.app');
-                    const apiPrefix = isNetlify ? '/haravan-api' : 'https://apis.haravan.com';
+                    // --- MẤU CHỐT SỐ 1: NHẬN DIỆN VERCEL ĐỂ DÙNG PROXY ---
+                    const isProxyEnv = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('vercel.app');
+                    const apiPrefix = isProxyEnv ? '/haravan-api' : 'https://apis.haravan.com';
 
                     let successCount = 0;
                     let failLog = [];
@@ -335,69 +414,54 @@
                         const empId = chk.value;
                         const emp = EMPLOYEES.find(e => e.id === empId);
                         const pageId = HARAVAN_IDS[empId][mode];
-                        const htmlContent = generateHTMLFinal(processedGroups, emp, mode);
+                        const htmlContent = generateHTMLFinal(processedGroups, emp, mode, staticDateStr, extraConfig);
                         
-                        if(btnId) document.getElementById(btnId).innerHTML = `⏳ Đang up: ${emp.label} (${index+1}/${selectedChecks.length})...`;
+                        const percent = Math.round(((index + 1) / selectedChecks.length) * 100);
+                        progressBar.style.width = `${percent}%`;
+                        log(`Đang xử lý: ${emp.label}...`);
 
-                        if(index > 0) {
-                             if(btnId) document.getElementById(btnId).innerHTML = `⏳ Server đang nghỉ mệt (2s)...`;
-                             await delay(2000); 
-                        }
+                        if(index > 0) await delay(1000);
 
-                        try {
-                            const url = `${apiPrefix}/web/pages/${pageId}.json`;
-                            
-                            // 1. GET PAGE INFO ĐỂ LẤY TITLE (FIX LỖI 400)
-                            const getRes = await fetch(url, {
-                                method: 'GET',
-                                headers: { 
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${token}`, 
-                                    'Accept': 'application/json'
-                                }
-                            });
-                            
-                            let currentTitle = `Bảng giá ${pageId}`;
-                            if(getRes.ok) {
-                                const pageData = await getRes.json();
-                                if(pageData.page && pageData.page.title) currentTitle = pageData.page.title;
+                        let attempts = 0;
+                        let maxAttempts = 3;
+                        let isSuccess = false;
+
+                        while(attempts < maxAttempts && !isSuccess) {
+                            try {
+                                // --- MẤU CHỐT SỐ 2: KHÔNG GỌI GET, GỌI THẲNG PUT ---
+                                // --- NHƯNG PHẢI ĐẢM BẢO HTML CONTENT "SẠCH" ---
+                                // --- DÙNG ĐÚNG HEADER BEARER CỦA V85 ---
+                                const url = `${apiPrefix}/web/pages/${pageId}.json`;
+                                
+                                const response = await fetch(url, {
+                                    method: 'PUT',
+                                    headers: { 
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${token}`, 
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({ page: { id: pageId, body_html: htmlContent } })
+                                });
+                                if (!response.ok) { const errText = await response.text(); throw new Error(`${response.status} - ${errText.slice(0, 100)}`); }
+                                isSuccess = true;
+                                successCount++;
+                                log(`✅ ${emp.label}: Thành công!`, 'success');
+                            } catch (err) {
+                                attempts++;
+                                log(`⚠️ ${emp.label}: Lỗi lần ${attempts}: ${err.message}`, 'warn');
+                                if (attempts < maxAttempts) { await delay(2000); } else { log(`❌ ${emp.label}: THẤT BẠI.`, 'error'); failLog.push(`${emp.label} (${err.message})`); }
                             }
-
-                            // 2. PUT UPDATE VỚI TITLE ĐẦY ĐỦ
-                            const response = await fetch(url, {
-                                method: 'PUT',
-                                headers: { 
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${token}`,
-                                    'Accept': 'application/json'
-                                },
-                                body: JSON.stringify({ page: { id: pageId, title: currentTitle, body_html: htmlContent } })
-                            });
-
-                            if (!response.ok) {
-                                const errText = await response.text();
-                                throw new Error(`${response.status} - ${errText.slice(0, 100)}...`);
-                            }
-                            successCount++;
-                        } catch(err) {
-                            failLog.push(`${emp.label} (Lỗi: ${err.message})`);
                         }
                     }
 
-                    if(failLog.length === 0) {
-                        alert(`✅ TUYỆT VỜI! Đã cập nhật xong cả ${successCount} bảng giá.`);
-                    } else {
-                        alert(`⚠️ Đã xong ${successCount} mục.\n❌ Lỗi ${failLog.length} mục:\n${failLog.join('\n')}`);
-                    }
+                    if(failLog.length === 0) { log("=== HOÀN TẤT TOÀN BỘ ===", 'success'); alert("Thành công tất cả!"); } 
+                    else { alert(`Có lỗi ${failLog.length} mục. Xem log.`); }
                 }
             } catch (err) {
-                alert("❌ Lỗi xử lý file: " + err.message);
+                alert("Lỗi: " + err.message);
+                log("Lỗi: " + err.message, 'error');
             } finally {
-                if(btnId) {
-                    const btn = document.getElementById(btnId);
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
+                if(btnId) { var btn = document.getElementById(btnId); btn.innerHTML = originalText; btn.disabled = false; }
             }
         };
         reader.readAsArrayBuffer(fileInput.files[0]);
