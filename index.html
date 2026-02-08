@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools AI Auto - LongCa (v119 Final)</title>
+    <title>Tools AI Auto - LongCa (v120 Final Solution)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -49,7 +49,7 @@
     
     <div class="card">
         <h2>TOOLS AI AUTO</h2>
-        <h3 class="brand-title">v119 - Final Proxy Fix</h3>
+        <h3 class="brand-title">v120 - Final Solution</h3>
         
         <div class="form-group">
             <label class="form-label">🔑 HARAVAN TOKEN:</label>
@@ -258,7 +258,7 @@
             extraNoteHTML = `<span style="color:#d32f2f; margin-left:10px; font-weight:bold;">📢 ${extraConfig.noteContent}</span>`;
         }
 
-        // --- 1. PHẦN TĨNH (STATIC TOP): Chữ đỏ ---
+        // --- 1. PHẦN TĨNH (STATIC TOP): Chữ đỏ (Trôi đi) ---
         const topStaticContent = `
         <div style="padding:10px 10px 5px 10px; text-align:center; background:white;">
             <div style="color:#d32f2f; font-weight:900; font-size:15px; text-transform:uppercase; margin-bottom:5px; border: 2px dashed #d32f2f; padding: 5px 10px; display:inline-block; border-radius:8px; background:#ffebee;">
@@ -410,7 +410,7 @@
                     if (!token) throw new Error("Vui lòng nhập Token API!");
                     
                     const isNetlify = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('vercel.app');
-                    // Sử dụng /haravan-api để đi qua Proxy (Netlify/Vercel)
+                    // QUAN TRỌNG: Sử dụng /haravan-api để đi qua Proxy (Netlify/Vercel)
                     const apiPrefix = isNetlify ? '/haravan-api' : 'https://apis.haravan.com';
 
                     let successCount = 0;
@@ -434,6 +434,8 @@
 
                         while(attempts < maxAttempts && !isSuccess) {
                             try {
+                                // --- QUAY LẠI CƠ CHẾ PUT TRỰC TIẾP CỦA v85 ---
+                                // BỎ BƯỚC GET (Vì nó gây lỗi 400 và v85 không cần nó)
                                 const url = `${apiPrefix}/web/pages/${pageId}.json`;
                                 
                                 const response = await fetch(url, {
