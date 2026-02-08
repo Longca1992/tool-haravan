@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools AI Auto - LongCa (v114 Logic Get+Put)</title>
+    <title>Tools AI Auto - LongCa (v115 Final Request)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -49,7 +49,7 @@
     
     <div class="card">
         <h2>TOOLS AI AUTO</h2>
-        <h3 class="brand-title">v114 - Logic Get+Put (Vercel)</h3>
+        <h3 class="brand-title">v115 - Custom Header Fix</h3>
         
         <div class="form-group">
             <label class="form-label">🔑 HARAVAN TOKEN:</label>
@@ -243,6 +243,7 @@
     }
 
     function generateHTMLFinal(g, emp, mode, dateStr, extraConfig) {
+        // --- CHỈ DÙNG CSS NỘI TUYẾN - TUYỆT ĐỐI KHÔNG DÙNG THẺ STYLE/SCRIPT ---
         const headerColor = (mode === 'retail') ? '#e65100' : '#0056b3';
         const phoneColor = (mode === 'retail') ? '#e65100' : '#0068ff';
 
@@ -257,7 +258,7 @@
             extraNoteHTML = `<span style="color:#d32f2f; margin-left:10px; font-weight:bold;">📢 ${extraConfig.noteContent}</span>`;
         }
 
-        // --- 1. PHẦN TĨNH (STATIC TOP) ---
+        // --- 1. PHẦN TĨNH (STATIC TOP): Chữ đỏ (TRÔI ĐI KHI CUỘN) ---
         const topStaticContent = `
         <div style="padding:10px 10px 5px 10px; text-align:center; background:white;">
             <div style="color:#d32f2f; font-weight:900; font-size:15px; text-transform:uppercase; margin-bottom:5px; border: 2px dashed #d32f2f; padding: 5px 10px; display:inline-block; border-radius:8px; background:#ffebee;">
@@ -265,7 +266,8 @@
             </div>
         </div>`;
 
-        // --- 2. PHẦN GHIM (STICKY) ---
+        // --- 2. PHẦN GHIM (STICKY): Chỉ gồm Ngày giờ & Nội dung ---
+        // Dùng CSS inline cho Sticky
         let stickyStyle = extraConfig.hideSticky ? "" : "position:sticky; top:0; z-index:1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);";
         const stickyContent = `
         <div style="${stickyStyle} background:white; border-bottom:1px solid #eee;">
@@ -282,7 +284,7 @@
         </div>
         `;
 
-        // --- 4. ZALO FOOTER ---
+        // --- 4. ZALO FOOTER (SIÊU NHỎ GỌN - 35px) ---
         let zaloButtonHTML = "";
         const zaloIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png";
         
@@ -432,33 +434,28 @@
 
                         while(attempts < maxAttempts && !isSuccess) {
                             try {
-                                // 1. LẤY THÔNG TIN PAGE HIỆN TẠI (GET) ĐỂ LẤY TITLE
-                                // Dùng đúng Header "Authorization: Bearer" như code v85
+                                // 1. LẤY THÔNG TIN PAGE HIỆN TẠI (GET)
                                 const getPageUrl = `${apiPrefix}/web/pages/${pageId}.json`;
                                 const pageRes = await fetch(getPageUrl, {
                                     method: 'GET',
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        'Authorization': `Bearer ${token}`, 
+                                        // Sử dụng đúng header X-Haravan-Access-Token như bạn yêu cầu
+                                        'X-Haravan-Access-Token': token, 
                                         'Accept': 'application/json'
                                     }
                                 });
                                 
-                                // Nếu Get lỗi thì dùng Title mặc định
-                                let currentTitle = `Bảng giá ${pageId}`;
-                                let currentHandle = null;
-                                if (pageRes.ok) {
-                                    const pageData = await pageRes.json();
-                                    currentTitle = pageData.page?.title || currentTitle;
-                                    currentHandle = pageData.page?.handle;
-                                }
+                                if (!pageRes.ok) throw new Error("Lỗi lấy thông tin page: " + pageRes.status);
+                                const pageData = await pageRes.json();
+                                const currentTitle = pageData.page?.title || `Bảng giá ${pageId}`;
+                                const currentHandle = pageData.page?.handle;
 
                                 // 2. CHUẨN BỊ BODY (PUT) - CÓ TITLE
                                 const putBody = {
                                     page: {
-                                        id: pageId,
                                         title: currentTitle,        // BẮT BUỘC
-                                        body_html: htmlContent,     // Nội dung mới (Clean HTML)
+                                        body_html: htmlContent,     // Nội dung mới
                                     }
                                 };
                                 if (currentHandle) putBody.page.handle = currentHandle;
@@ -468,7 +465,7 @@
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        'Authorization': `Bearer ${token}`, // Chuẩn v85
+                                        'X-Haravan-Access-Token': token, // Header tùy chỉnh
                                         'Accept': 'application/json'
                                     },
                                     body: JSON.stringify(putBody)
