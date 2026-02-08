@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools AI Auto - LongCa (v109 Vercel Edition)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Roboto', sans-serif; padding: 20px; background: #f0f2f5; height: 100vh; box-sizing: border-box; overflow-y: auto; }
+        .main-container { display: grid; grid-template-columns: 350px 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; height: calc(100vh - 40px); }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e1e4e8; display: flex; flex-direction: column; }
+        h2 { color: #0277bd; margin: 0 0 5px 0; font-weight: 900; font-size: 18px; text-transform: uppercase; }
+        h3.brand-title { margin: 0 0 15px 0; font-size: 14px; color: #78909c; font-weight: 500; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { font-size: 12px; font-weight: bold; color: #455a64; display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 10px; border: 1px solid #cfd8dc; border-radius: 6px; font-size: 13px; box-sizing: border-box; }
+        .upload-compact { display: flex; align-items: center; justify-content: space-between; background: #e1f5fe; border: 1px dashed #0288d1; padding: 10px 15px; border-radius: 8px; cursor: pointer; margin-bottom: 15px; transition: 0.2s; }
+        .upload-compact:hover { background: #b3e5fc; }
+        .upload-compact span { font-weight: bold; color: #0277bd; font-size: 13px; }
+        .file-status { font-size: 12px; color: #546e7a; font-style: italic; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-bottom: 15px; }
+        .user-item { display: flex; align-items: center; padding: 8px; border-radius: 6px; background: #fafafa; border: 1px solid #eceff1; cursor: pointer; transition: 0.2s; }
+        .user-item:hover { background: #e3f2fd; border-color: #90caf9; }
+        .user-item input { margin-right: 8px; transform: scale(1.2); cursor: pointer; }
+        .user-item label { cursor: pointer; font-size: 13px; font-weight: 500; width: 100%; }
+        .select-all { background: #e0f2f1; border-color: #80cbc4; }
+        .action-row { display: flex; gap: 10px; margin-top: auto; }
+        button { flex: 1; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; border: none; color: white; text-transform: uppercase; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        button:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.15); }
+        button:active { transform: translateY(1px); }
+        button:disabled { background: #cfd8dc !important; cursor: not-allowed; transform: none; }
+        .btn-si { background: linear-gradient(45deg, #ff6f00, #ff8f00); } 
+        .btn-le { background: linear-gradient(45deg, #2e7d32, #43a047); } 
+        .btn-dl { background: #607d8b; width: 40px; flex: none; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .progress-container { width: 100%; background: #e0e0e0; height: 6px; border-radius: 3px; margin: 10px 0; overflow: hidden; }
+        .progress-bar { width: 0%; height: 100%; background: #4caf50; transition: width 0.3s; }
+        .log-console { background: #263238; color: #eceff1; font-family: monospace; font-size: 11px; padding: 10px; border-radius: 8px; flex: 1; overflow-y: auto; margin-top: 10px; white-space: pre-wrap; border: 1px solid #455a64; min-height: 100px; }
+        .checkbox-row { display: flex; align-items: center; gap: 5px; margin-top: 5px; font-size: 12px; color: #37474f; cursor: pointer; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: #f1f1f1; } ::-webkit-scrollbar-thumb { background: #cfd8dc; border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: #90a4ae; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    
+    <div class="card">
+        <h2>TOOLS AI AUTO</h2>
+        <h3 class="brand-title">v109 - Vercel Ready</h3>
+        
+        <div class="form-group">
+            <label class="form-label">🔑 HARAVAN TOKEN:</label>
+            <input type="password" id="haravan_token" placeholder="Dán Token API vào đây...">
+        </div>
+
+        <div style="border-top: 1px dashed #eee; margin: 10px 0;"></div>
+
+        <div class="form-group">
+            <label class="form-label" style="color:#d32f2f;">📝 NỘI DUNG GHI CHÚ (Hiện cạnh giờ):</label>
+            <input type="text" id="update_note" placeholder="VD: Hàng mới về, Giá giảm sốc..." style="border-color:#ef9a9a; color:#c62828; font-weight:bold;">
+            <div style="font-size:10px; color:#90a4ae; margin-top:3px;">(Để trống nếu không cần ghi chú thêm)</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">🎨 TÙY CHỈNH KHÁC:</label>
+            <label class="checkbox-row">
+                <input type="checkbox" id="hide_sticky_menu"> 🚫 Tắt Chế Độ Dính (Sticky)
+            </label>
+            <div style="font-size:10px; color:#78909c; margin-left: 18px;">(Mặc định: Dính Ngày/Giờ + Nội dung)</div>
+        </div>
+
+        <div style="margin-top:auto; font-size: 10px; color: #b0bec5; text-align: center;">
+            Dev by LongCa
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="upload-compact" onclick="document.getElementById('upload').click()">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:18px">📂</span>
+                <span>CHỌN FILE EXCEL</span>
+            </div>
+            <div id="file-name" class="file-status">(Chưa chọn file)</div>
+            <input type="file" id="upload" accept=".xlsx, .xls" style="display:none" />
+        </div>
+
+        <div class="user-grid" id="employee-container">
+            <div class="user-item select-all">
+                <input type="checkbox" id="check-all" onclick="toggleAll(this)">
+                <label for="check-all" style="font-weight:bold; color:#00695c;">CHỌN TẤT CẢ</label>
+            </div>
+        </div>
+
+        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+        <div class="log-console" id="log-console">Sẵn sàng...</div>
+
+        <div class="action-row" style="margin-top: 15px;">
+            <button class="btn-si" id="btn-sync-si" onclick="processSync('wholesale')">⚡ UP GIÁ SỈ</button>
+            <button class="btn-le" id="btn-sync-le" onclick="processSync('retail')">🌐 UP GIÁ LẺ</button>
+            <button class="btn-dl" onclick="processDownload('wholesale')" title="Tải file SỈ dự phòng">💾 S</button>
+            <button class="btn-dl" onclick="processDownload('retail')" title="Tải file LẺ dự phòng">💾 L</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const HARAVAN_IDS = {
+        "nv1": { "wholesale": "1004290194", "retail": "1004292385" },
+        "nv3": { "wholesale": "1004290195", "retail": "1004292392" },
+        "nv2": { "wholesale": "1004290197", "retail": "1004292393" },
+        "nv4": { "wholesale": "1004290198", "retail": "1004292394" },
+        "general": { "wholesale": "1004285946", "retail": "1004292384" }
+    };
+    
+    const SEARCH_KEYWORDS = ["Mực 1 Nắng", "Mực Trứng", "Mực Lá", "Mực Ống", "Mực Nang", "Khô Mực", "Răng Mực", "Mực", "Tôm Hùm", "Tôm Bắc Cực", "Tôm Tít", "Tôm Giòn", "Tôm", "Cá Thác Lác", "Ức Cá", "Cá Hồi", "Cá Ngừ", "Cá Trích", "Cá Tuyết", "Cá Sapa", "Cá Saba", "Cá Thu", "Cá Đù", "Cá Dứa", "Cá Ninja", "Cá Mú", "Cá Sặc", "Gà Ủ Muối", "Vú Heo", "Đậu nành", "Chả Giò", "Điệp 1 mảnh", "Tobiko", "Ebiko", "Vẹm", "Bò", "Bào Ngư", "Vi Cá", "Hải Sâm", "Bạch Tuộc", "Sò Điệp", "Cồi Điệp", "Sò Đỏ", "Sò Lông", "Sò Huyết", "Sò Mai", "Ốc Hương", "Ốc Bulot", "Hàu", "Thịt Cua", "Thịt Ghẹ", "Càng Cua", "Càng Ghẹ", "Cua Hoàng Đế", "Chân Cua Tuyết", "Chả Cá", "Chả Mực", "Chả Ghẹ", "Chả Ốc", "Chả Ram", "Nem Chua", "Nem Lụi", "Dồi Sụn", "Lươn Nhật", "Unagi", "Sụn Gà", "Cánh Gà", "Đùi Gà", "Chân Gà", "Heo Iberico", "Sườn Heo", "Khoai Tây", "Phô Mai", "Rong Biển", "Mù Tạt", "Nước Tương", "Gừng Hồng"];
+    SEARCH_KEYWORDS.sort((a, b) => b.length - a.length);
+
+    const EMPLOYEES = [
+        { id: "nv1", name: "Duong", phone: "0705777131", label: "Dương" },
+        { id: "nv3", name: "Hang",  phone: "0789698989", label: "Hằng" },
+        { id: "nv2", name: "Duyen", phone: "0937888155", label: "Duyên" },
+        { id: "nv4", name: "Chi",   phone: "0936111846", label: "Chi" },
+        { id: "general", name: "BangGiaTong", phone: "0987777131", label: "Tổng", type: "general" } 
+    ];
+    
+    const ZALO_INFO = {
+        "nv1": { zLabel: "Dương", phone: "0705777131" },
+        "nv2": { zLabel: "Duyên", phone: "0937888155" },
+        "nv3": { zLabel: "Hằng", phone: "0789698989" },
+        "nv4": { zLabel: "Chi", phone: "0936111846" },
+        "general": { zLabel: "Tổng", phone: "0987777131" }
+    };
+    
+    const FOOTER_CONTACTS = [
+        { name: "Dương", phone: "0705777131", initial: "D" },
+        { name: "Hằng",  phone: "0789698989", initial: "H" },
+        { name: "Duyên", phone: "0937888155", initial: "D" },
+        { name: "Chi",   phone: "0936111846", initial: "C" }
+    ];
+
+    const CONFIG = {
+        deleteKeywords: ["Set", "250gr", "240gr", "100gr", "200gr", "300gr", "50gr", "0,33gr", "2con", "2 túi", "2 Hộp", "Túi 100gr", "10gr", "20gr", "1Con", "2 Gói"],
+        keepNames: ["Nem", "Tobiko", "Ebiko", "Phô Mai Malaysia", "Dồi Sụn", "Rong"],
+        garbageKeywords: ["Xốp", "Product-Haravan", "Móc Khoá", "Ship", "Sản Phẩm Thêm", "Túi Hút Chân Không", "Phí Dịch Vụ", "Tảng", "Cước Xe", "Đọc Ghi Chú", "Phí DV"],
+        sashimiKeywords: ["Sashimi", "Wasabi", "Rong"],
+        meatKeywords: ["Heo", "Bò", "Gà", "Ngỗng"],
+        seafoodKeywords: ["Tôm", "Cua", "Ghe", "Ghẹ", "Vẹm", "Cồi", "Điệp", "Bào Ngư", "Nghêu", "Hàu", "Cá", "Mực", "Sò", "Lươn", "Rong", "Hải", "Bào"]
+    };
+
+    const container = document.getElementById('employee-container');
+    EMPLOYEES.forEach(emp => {
+        const div = document.createElement('div');
+        div.className = 'user-item';
+        div.innerHTML = `<input type="checkbox" class="emp-check" id="chk_${emp.id}" value="${emp.id}"><label for="chk_${emp.id}">${emp.label}</label>`;
+        container.appendChild(div);
+    });
+
+    function getCurrentTimeStr() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const year = now.getFullYear();
+        return `${hours}:${minutes} ngày ${day}/${month}/${year}`;
+    }
+
+    function log(msg, type='info') {
+        const consoleEl = document.getElementById('log-console');
+        const time = new Date().toLocaleTimeString();
+        let color = '#eceff1';
+        if(type === 'success') color = '#69f0ae';
+        if(type === 'error') color = '#ff5252';
+        if(type === 'warn') color = '#ffd740';
+        consoleEl.innerHTML += `<div style="color:${color}">[${time}] ${msg}</div>`;
+        consoleEl.scrollTop = consoleEl.scrollHeight;
+    }
+
+    document.getElementById('upload').addEventListener('change', function(){
+        const name = this.files[0] ? this.files[0].name : "(Chưa chọn file)";
+        document.getElementById('file-name').innerText = name;
+        if(this.files[0]) document.getElementById('file-name').style.color = "#0277bd";
+    });
+
+    function toggleAll(source) {
+        document.querySelectorAll('.emp-check').forEach(cb => cb.checked = source.checked);
+    }
+
+    function generateSmartLink(rawName) {
+        const nameUpper = rawName.toUpperCase();
+        for (let keyword of SEARCH_KEYWORDS) {
+            if (nameUpper.includes(keyword.toUpperCase())) {
+                return `https://haisankyha.vn/search?type=product&q=${encodeURIComponent(keyword)}`;
+            }
+        }
+        let cleanName = rawName.replace(/\(.*?\)/g, "").replace(/-\s*\d+.*$/, "").trim();
+        let words = cleanName.split(/\s+/);
+        if (words.length > 4) cleanName = words.slice(0, 4).join(" ");
+        return `https://haisankyha.vn/search?type=product&q=${encodeURIComponent(cleanName)}`;
+    }
+
+    function parse(v) { return parseFloat(String(v).replace(/[^0-9]/g,''))||0; }
+    function fmt(v) { return (v<=0)?"Liên Hệ":v.toLocaleString('en-US'); }
+
+    function processData(jsonData) {
+        const sRow = jsonData[0];
+        const find = (keys) => { for(let k of keys) if(sRow[k]!==undefined) return k; return Object.keys(sRow).find(k=>keys.some(x=>k.toLowerCase().includes(x.toLowerCase()))); };
+        const colName = find(["Tên hàng", "Tên sản phẩm"]);
+        const colRetail = find(["Bảng giá chung", "Giá lẻ"]);
+        const colCTV = find(["Giá CTV", "Cộng tác viên"]);
+        const colBase10 = find(["Sỉ từ 10kg", "Giá 10kg", "10kg"]);
+        const colBase50 = find(["Sỉ trên 50kg", "Giá 50kg", "50kg"]);
+        
+        let processed = [];
+        jsonData.forEach(row => {
+            let name = String(row[colName]||"").trim(), unit = String(row["Đơn vị tính"]||"").toLowerCase();
+            if (!name) return;
+            let isKeep = CONFIG.keepNames.some(n => name.toLowerCase().includes(n.toLowerCase()));
+            if (!isKeep) {
+                if (unit.includes("500gr")) return;
+                if (CONFIG.deleteKeywords.some(k => unit.includes(k.toLowerCase()) || name.toLowerCase().includes(k.toLowerCase())) || CONFIG.garbageKeywords.some(k => JSON.stringify(row).toLowerCase().includes(k.toLowerCase()))) return;
+            }
+            let p10 = parse(row[colBase10]), p50 = parse(row[colBase50]);
+            let v10 = name.match(/-\s*[08]$/) ? p10 : Math.ceil((p10/1.05)/1000)*1000;
+            let v50 = name.match(/-\s*[08]$/) ? p50 : Math.ceil((p50/1.05)/1000)*1000;
+            let link = generateSmartLink(name);
+            processed.push({ name, link, retail: fmt(parse(row[colRetail])), ctv: fmt(parse(row[colCTV])), vat10: fmt(v10), hkd10: fmt(p10), vat50: fmt(v50), hkd50: fmt(p50) });
+        });
+        
+        let groups = { sashimi: [], seafood: [], meat: [], other: [] };
+        processed.forEach(i => {
+            let n = i.name.toLowerCase();
+            if (CONFIG.sashimiKeywords.some(k=>n.includes(k.toLowerCase()))) groups.sashimi.push(i);
+            else if (CONFIG.seafoodKeywords.some(k=>n.includes(k.toLowerCase()))) groups.seafood.push(i);
+            else if (CONFIG.meatKeywords.some(k=>n.includes(k.toLowerCase()))) groups.meat.push(i);
+            else groups.other.push(i);
+        });
+        for(let k in groups) groups[k].sort((a,b)=>a.name.localeCompare(b.name));
+        return groups;
+    }
+
+    function generateHTMLFinal(g, emp, mode, dateStr, extraConfig) {
+        // --- CHỈ DÙNG CSS NỘI TUYẾN - TUYỆT ĐỐI KHÔNG DÙNG THẺ STYLE/SCRIPT ---
+        const headerColor = (mode === 'retail') ? '#e65100' : '#0056b3';
+        const phoneColor = (mode === 'retail') ? '#e65100' : '#0068ff';
+
+        const tableStyle = (mode === 'retail') ? "width:100%; border-collapse:collapse;" : "width:100%; border-collapse:collapse; min-width:800px;";
+        const thStyle = `background:${headerColor}; color:white; padding:8px; border:1px solid #ccc; text-align:center; white-space:nowrap;`;
+        const tdStyle = "padding:8px; border:1px solid #ccc; text-align:center; color:#333; vertical-align: middle;";
+        let nameTdStyle = (mode === 'retail') ? "padding:8px; border:1px solid #ccc; text-align:left; font-weight:bold; vertical-align: middle;" 
+            : "padding:8px; border:1px solid #ccc; text-align:left; font-weight:bold; min-width:150px; position:sticky; left:0; background:white; z-index:10; border-right:2px solid #ddd; vertical-align: middle;";
+        
+        let extraNoteHTML = "";
+        if(extraConfig.noteContent) {
+            extraNoteHTML = `<span style="color:#d32f2f; margin-left:10px; font-weight:bold;">📢 ${extraConfig.noteContent}</span>`;
+        }
+
+        // --- 1. PHẦN TĨNH (STATIC TOP): Chữ đỏ ---
+        const topStaticContent = `
+        <div style="padding:10px 10px 5px 10px; text-align:center; background:white;">
+            <div style="color:#d32f2f; font-weight:900; font-size:15px; text-transform:uppercase; margin-bottom:5px; border: 2px dashed #d32f2f; padding: 5px 10px; display:inline-block; border-radius:8px; background:#ffebee;">
+                KHÁCH HÀNG CẦN SỐ LƯỢNG LỚN VUI LÒNG LIÊN HỆ TRỰC TIẾP
+            </div>
+        </div>`;
+
+        // --- 2. PHẦN GHIM (STICKY): Chỉ gồm Ngày giờ & Nội dung ---
+        // Dùng CSS inline cho Sticky
+        let stickyStyle = extraConfig.hideSticky ? "" : "position:sticky; top:0; z-index:1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);";
+        const stickyContent = `
+        <div style="${stickyStyle} background:white; border-bottom:1px solid #eee;">
+            <div style="font-size:13px; color:#455a64; font-weight:500; text-align:center; padding:8px; background:#fff8e1; border-bottom:1px dashed #eee;">
+                🕒 Cập nhật: <span style="color:#0277bd; font-weight:bold;">${dateStr}</span>${extraNoteHTML}
+            </div>
+        </div>
+        `;
+
+        // --- 3. DÒNG LƯU Ý NHỎ ---
+        const subNote = `
+        <div style="text-align:center; padding:5px; background:white;">
+            <div style="font-size:11px; color:#78909c; font-style:italic;">⚠️ Giá tham khảo (99%). Liên hệ Sales để có giá chuẩn nhất.</div>
+        </div>
+        `;
+
+        // --- 4. ZALO FOOTER (SIÊU NHỎ GỌN - 35px) ---
+        let zaloButtonHTML = "";
+        const zaloIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png";
+        
+        if (emp.type === "general") {
+            const items = FOOTER_CONTACTS.map((c, index) => {
+                const borderStyle = index < FOOTER_CONTACTS.length - 1 ? "border-right: 1px solid #e0e0e0;" : "";
+                return `
+                <a href="https://zalo.me/${c.phone}" target="_blank" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-decoration:none; color:#333; padding:2px 0; ${borderStyle} height:35px;">
+                    <img src="${zaloIconUrl}" style="width:16px; height:16px; margin-bottom:1px;">
+                    <span style="font-size:9px; font-weight:bold; color:${phoneColor};">${c.name}</span>
+                </a>`;
+            }).join('');
+
+            zaloButtonHTML = `
+                <div style="position:fixed !important; bottom:0 !important; left:0 !important; width:100% !important; height:35px; background:white; border-top:1px solid #ccc; box-shadow:0 -2px 10px rgba(0,0,0,0.1); z-index:2147483647 !important; display:flex; justify-content:space-around; align-items:center;">
+                    ${items}
+                </div>
+            `;
+        } else {
+            const zInfo = ZALO_INFO[emp.id];
+            const btnColor = (mode === 'retail') ? '#e65100' : '#0068ff';
+            zaloButtonHTML = `<a href="https://zalo.me/${zInfo.phone}" target="_blank" style="position:fixed !important; bottom:20px !important; right:20px !important; z-index:2147483647 !important; display:flex; align-items:center; background:${btnColor}; color:white; padding:8px 15px; border-radius:30px; text-decoration:none; box-shadow:0 4px 10px rgba(0,0,0,0.3); font-weight:bold; font-family:sans-serif; border: 2px solid white;"><img src="${zaloIconUrl}" style="width:20px; height:20px; margin-right:8px; filter: brightness(0) invert(1);"> Chat Zalo: ${zInfo.zLabel}</a>`;
+        }
+
+        let h = "", r = null;
+        if (mode === 'retail') {
+            h = `<thead><tr><th style="${thStyle}">Tên Sản Phẩm</th><th style="${thStyle} width:110px; min-width:110px;">Giá Lẻ</th></tr></thead>`;
+            r = (list) => list.map(i => {
+                const linkHtml = i.link ? `<div style="margin-top:3px; font-weight:normal;"><a href="${i.link}" target="_blank" style="display:inline-block; padding:2px 0; color:#e65100; font-size:12px; font-style:italic; text-decoration:none;">👉 Xem sản phẩm</a></div>` : "";
+                return `<tr><td style="${nameTdStyle}">${i.name}${linkHtml}</td><td style="${tdStyle} font-weight:bold; color:#d32f2f; white-space:nowrap;">${i.retail}</td></tr>`;
+            }).join('');
+        } else {
+            h = `<thead><tr><th style="${thStyle}">Tên Sản Phẩm</th><th style="${thStyle}">VAT C.Ty<br>10Kg</th><th style="${thStyle}">HKD<br>10Kg</th><th style="${thStyle}">VAT C.Ty<br>50Kg</th><th style="${thStyle}">HKD<br>50Kg</th><th style="${thStyle}">CTV</th><th style="${thStyle}">Lẻ</th></tr></thead>`;
+            r = (list) => list.map(i => {
+                const linkHtml = i.link ? `<div style="margin-top:3px; font-weight:normal;"><a href="${i.link}" target="_blank" style="display:inline-block; padding:2px 0; color:#0068ff; font-size:12px; font-style:italic; text-decoration:none;">👉 Xem sản phẩm</a></div>` : "";
+                return `<tr><td style="${nameTdStyle}">${i.name}${linkHtml}</td><td style="${tdStyle}">${i.vat10}</td><td style="${tdStyle}">${i.hkd10}</td><td style="${tdStyle}">${i.vat50}</td><td style="${tdStyle}">${i.hkd50}</td><td style="${tdStyle}">${i.ctv}</td><td style="${tdStyle}">${i.retail}</td></tr>`;
+            }).join('');
+        }
+        
+        const section = (id, title, data) => data.length ? `<div id="${id}" style="background:#f4f6f8; color:${headerColor}; padding:10px; font-weight:bold; margin:20px 0 5px 0; border-left:4px solid ${headerColor}; scroll-margin-top: 50px;">${title}</div><div style="width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;"><table style="${tableStyle}">${h}<tbody>${r(data)}</tbody></table></div>` : '';
+        
+        // --- KẾT HỢP HTML CUỐI CÙNG ---
+        // (Không chèn script ẩn title vì Haravan sẽ chặn)
+        return `<div id="pricing-tool-wrapper" style="font-family:Arial, sans-serif; padding-bottom: 60px;">
+            ${topStaticContent}
+            ${stickyContent}
+            ${subNote}
+            ${section('sashimi', 'SASHIMI & SUSHI', g.sashimi)}
+            ${section('haisan', 'HẢI SẢN', g.seafood)}
+            ${section('thit', 'THỊT', g.meat)}
+            ${section('khac', 'KHÁC', g.other)}
+            ${zaloButtonHTML}
+        </div>`;
+    }
+
+    async function processDownload(mode) { handleProcess('download', mode); }
+    async function processSync(mode) {
+        const selected = document.querySelectorAll('.emp-check:checked');
+        if(selected.length === 0) { alert('⚠️ Vui lòng chọn ít nhất 1 người!'); return; }
+        if(confirm(`⚠️ BẠN SẮP CẬP NHẬT CHO ${selected.length} NGƯỜI?\nDữ liệu trên Web sẽ bị ghi đè.`)) {
+            handleProcess('sync', mode);
+        }
+    }
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    async function handleProcess(actionType, mode) {
+        const fileInput = document.getElementById('upload');
+        const selectedChecks = Array.from(document.querySelectorAll('.emp-check:checked'));
+        const progressBar = document.getElementById('progress-bar');
+        
+        const extraConfig = {
+            noteContent: document.getElementById('update_note').value.trim(),
+            hideSticky: document.getElementById('hide_sticky_menu').checked
+        };
+
+        if (!fileInput.files.length) { alert('⚠️ Vui lòng chọn file Excel!'); return; }
+        if (selectedChecks.length === 0) { alert('⚠️ Vui lòng chọn nhân viên!'); return; }
+
+        let btnId = "";
+        if(actionType === 'sync') btnId = mode === 'wholesale' ? 'btn-sync-si' : 'btn-sync-le';
+        if(btnId) {
+            var btn = document.getElementById(btnId);
+            var originalText = btn.innerHTML;
+            btn.innerHTML = "⏳ RUNNING...";
+            btn.disabled = true;
+        }
+
+        log("=== BẮT ĐẦU XỬ LÝ ===");
+        progressBar.style.width = '0%';
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const workbook = XLSX.read(e.target.result, {type: 'array'});
+                const jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {defval: ""});
+                const processedGroups = processData(jsonData);
+                
+                const staticDateStr = getCurrentTimeStr();
+                log(`Thời gian bản tin: ${staticDateStr}`);
+
+                if (actionType === 'download') {
+                    if(selectedChecks.length === 1) {
+                         const empId = selectedChecks[0].value;
+                         const emp = EMPLOYEES.find(e => e.id === empId);
+                         const content = generateHTMLFinal(processedGroups, emp, mode, staticDateStr, extraConfig);
+                         const fullHtml = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bảng Giá</title></head><body>${content}</body></html>`;
+                         const fileName = `Bang_Gia_${mode === 'wholesale' ? 'SI' : 'LE'}_${emp.name}.html`;
+                         saveAs(new Blob([fullHtml], {type: "text/html;charset=utf-8"}), fileName);
+                         log("Đã tải file thành công!", 'success');
+                    } else {
+                         const zip = new JSZip();
+                         selectedChecks.forEach(chk => {
+                             const empId = chk.value;
+                             const emp = EMPLOYEES.find(e => e.id === empId);
+                             const content = generateHTMLFinal(processedGroups, emp, mode, staticDateStr, extraConfig);
+                             const fullHtml = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Bảng Giá</title></head><body>${content}</body></html>`;
+                             zip.file(`Bang_Gia_${mode === 'wholesale' ? 'SI' : 'LE'}_${emp.name}.html`, fullHtml);
+                         });
+                         saveAs(await zip.generateAsync({type:"blob"}), `Bang_Gia_${mode === 'wholesale' ? 'SI' : 'LE'}_All.zip`);
+                         log("Đã tải file ZIP thành công!", 'success');
+                    }
+                } else {
+                    const token = document.getElementById('haravan_token').value.trim();
+                    if (!token) throw new Error("Vui lòng nhập Token API!");
+                    
+                    const isNetlify = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('vercel.app');
+                    // Sử dụng /haravan-api để đi qua Proxy (Netlify/Vercel)
+                    const apiPrefix = isNetlify ? '/haravan-api' : 'https://apis.haravan.com';
+
+                    let successCount = 0;
+                    let failLog = [];
+                    
+                    for(const [index, chk] of selectedChecks.entries()) {
+                        const empId = chk.value;
+                        const emp = EMPLOYEES.find(e => e.id === empId);
+                        const pageId = HARAVAN_IDS[empId][mode];
+                        const htmlContent = generateHTMLFinal(processedGroups, emp, mode, staticDateStr, extraConfig);
+                        
+                        const percent = Math.round(((index + 1) / selectedChecks.length) * 100);
+                        progressBar.style.width = `${percent}%`;
+                        log(`Đang xử lý: ${emp.label}...`);
+
+                        if(index > 0) await delay(1000);
+
+                        let attempts = 0;
+                        let maxAttempts = 3;
+                        let isSuccess = false;
+
+                        while(attempts < maxAttempts && !isSuccess) {
+                            try {
+                                const url = `${apiPrefix}/web/pages/${pageId}.json`;
+                                
+                                const response = await fetch(url, {
+                                    method: 'PUT',
+                                    headers: { 
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${token}`,
+                                        'Accept': 'application/json'
+                                    },
+                                    body: JSON.stringify({ page: { id: pageId, body_html: htmlContent } })
+                                });
+                                if (!response.ok) { const errText = await response.text(); throw new Error(`${response.status} - ${errText.slice(0, 100)}`); }
+                                isSuccess = true;
+                                successCount++;
+                                log(`✅ ${emp.label}: Thành công!`, 'success');
+                            } catch (err) {
+                                attempts++;
+                                log(`⚠️ ${emp.label}: Lỗi lần ${attempts}: ${err.message}`, 'warn');
+                                if (attempts < maxAttempts) { await delay(2000); } else { log(`❌ ${emp.label}: THẤT BẠI.`, 'error'); failLog.push(`${emp.label} (${err.message})`); }
+                            }
+                        }
+                    }
+
+                    if(failLog.length === 0) { log("=== HOÀN TẤT TOÀN BỘ ===", 'success'); alert("Thành công tất cả!"); } 
+                    else { alert(`Có lỗi ${failLog.length} mục. Xem log.`); }
+                }
+            } catch (err) {
+                alert("Lỗi: " + err.message);
+                log("Lỗi: " + err.message, 'error');
+            } finally {
+                if(btnId) { var btn = document.getElementById(btnId); btn.innerHTML = originalText; btn.disabled = false; }
+            }
+        };
+        reader.readAsArrayBuffer(fileInput.files[0]);
+    }
+</script>
+</body>
+</html>
