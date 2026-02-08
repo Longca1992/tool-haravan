@@ -2,54 +2,54 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Tool Up Giá v136 (Fix Layout & Feature)</title>
+    <title>Tool Up Giá v134 (Fix 500 & Zalo)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Roboto', sans-serif; padding: 20px; background: #e3f2fd; }
-        .box { background: white; padding: 20px; border-radius: 8px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .box { background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #0277bd; text-transform: uppercase; }
         input[type="text"], input[type="password"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
         .btn-row { display: flex; gap: 10px; margin-top: 15px; }
         button { flex: 1; padding: 12px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; }
         .btn-si { background: #ff6f00; } .btn-le { background: #2e7d32; }
-        .btn-txt { background: #546e7a; color: #fff; }
         .log { background: #263238; color: #fff; padding: 10px; height: 200px; overflow-y: auto; font-size: 11px; margin-top: 15px; border-radius: 4px; font-family: monospace; }
-        .emp-list { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 10px; }
-        .emp-item { background: #f5f5f5; padding: 5px; cursor: pointer; display: flex; align-items: center; border-radius: 4px; font-size: 13px; }
+        .emp-list { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-top: 10px; }
+        .emp-item { background: #f5f5f5; padding: 5px; cursor: pointer; display: flex; align-items: center; border-radius: 4px; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>TOOL UP GIÁ (V136 FINAL)</h2>
-    <label>🔑 Token:</label><input type="password" id="haravan_token" placeholder="Dán Token (Không có chữ Mã API)...">
-    <label>📝 Ghi chú:</label><input type="text" id="update_note" placeholder="VD: Hàng mới về...">
+    <h2>TOOL UP GIÁ (FIX 500)</h2>
+    <label>🔑 Token:</label><input type="password" id="token" placeholder="Nhập Token...">
+    <label>📝 Ghi chú:</label><input type="text" id="note" placeholder="VD: Hàng mới về...">
     
-    <div style="margin-top:15px; background:#e1f5fe; padding:15px; text-align:center; border:2px dashed #0288d1; cursor:pointer; border-radius:6px;" onclick="document.getElementById('upload').click()">
+    <div style="margin-top:15px; background:#e1f5fe; padding:10px; text-align:center; border:1px dashed #0288d1; cursor:pointer;" onclick="document.getElementById('upload').click()">
         <span id="file-name" style="font-weight:bold; color:#0277bd;">📂 CHỌN FILE EXCEL</span>
         <input type="file" id="upload" accept=".xlsx" style="display:none">
     </div>
 
-    <div class="emp-list" id="emp-list"></div>
-
-    <div class="btn-row">
-        <button class="btn-si" onclick="run('wholesale')">⚡ UP SỈ</button>
-        <button class="btn-le" onclick="run('retail')">🌐 UP LẺ</button>
-    </div>
-    
-    <div class="btn-row">
-        <button class="btn-txt" onclick="downloadTXT('wholesale')">💾 TẢI TXT (SỈ)</button>
-        <button class="btn-txt" onclick="downloadTXT('retail')">💾 TẢI TXT (LẺ)</button>
+    <div class="emp-list">
+        <label class="emp-item" style="grid-column: span 2; background:#b2dfdb; font-weight:bold;"><input type="checkbox" onchange="toggleAll(this)"> TẤT CẢ</label>
+        <label class="emp-item"><input type="checkbox" class="emp-chk" value="nv1"> Dương</label>
+        <label class="emp-item"><input type="checkbox" class="emp-chk" value="nv3"> Hằng</label>
+        <label class="emp-item"><input type="checkbox" class="emp-chk" value="nv2"> Duyên</label>
+        <label class="emp-item"><input type="checkbox" class="emp-chk" value="nv4"> Chi</label>
+        <label class="emp-item"><input type="checkbox" class="emp-chk" value="general"> Tổng</label>
     </div>
 
+    <div class="btn-row">
+        <button class="btn-si" onclick="run('wholesale')">⚡ UP GIÁ SỈ</button>
+        <button class="btn-le" onclick="run('retail')">🌐 UP GIÁ LẺ</button>
+    </div>
     <div class="log" id="console">Sẵn sàng...</div>
 </div>
 
 <script>
-    const HARAVAN_IDS = {
+    const IDS = {
         "nv1": { "wholesale": "1004290194", "retail": "1004292385", "name": "Dương" },
         "nv3": { "wholesale": "1004290195", "retail": "1004292392", "name": "Hằng" },
         "nv2": { "wholesale": "1004290197", "retail": "1004292393", "name": "Duyên" },
@@ -57,6 +57,7 @@
         "general": { "wholesale": "1004285946", "retail": "1004292384", "name": "Tổng" }
     };
     
+    // Zalo Info
     const ZALO_INFO = { "nv1": {z:"Dương", p:"0705777131"}, "nv2": {z:"Duyên", p:"0937888155"}, "nv3": {z:"Hằng", p:"0789698989"}, "nv4": {z:"Chi", p:"0936111846"} };
     const CONTACTS = [ {n:"Dương",p:"0705777131"}, {n:"Hằng",p:"0789698989"}, {n:"Duyên",p:"0937888155"}, {n:"Chi",p:"0936111846"} ];
 
@@ -64,13 +65,6 @@
     SEARCH_KEYWORDS.sort((a, b) => b.length - a.length);
     
     const CONFIG = { deleteKeywords: ["Set", "250gr", "240gr", "100gr", "200gr", "300gr", "50gr", "0,33gr", "2con", "2 túi", "2 Hộp", "Túi 100gr", "10gr", "20gr", "1Con", "2 Gói"], keepNames: ["Nem", "Tobiko", "Ebiko", "Phô Mai Malaysia", "Dồi Sụn", "Rong"], garbageKeywords: ["Xốp", "Product-Haravan", "Móc Khoá", "Ship", "Sản Phẩm Thêm", "Túi Hút Chân Không", "Phí Dịch Vụ", "Tảng", "Cước Xe", "Đọc Ghi Chú", "Phí DV"], sashimiKeywords: ["Sashimi", "Wasabi", "Rong"], meatKeywords: ["Heo", "Bò", "Gà", "Ngỗng"], seafoodKeywords: ["Tôm", "Cua", "Ghe", "Ghẹ", "Vẹm", "Cồi", "Điệp", "Bào Ngư", "Nghêu", "Hàu", "Cá", "Mực", "Sò", "Lươn", "Rong", "Hải", "Bào"] };
-
-    // Render Checkbox
-    const el = document.getElementById('emp-list');
-    el.innerHTML = `<label class="emp-item" style="background:#b2dfdb; font-weight:bold; grid-column:1/-1;"><input type="checkbox" onchange="toggleAll(this)"> CHỌN TẤT CẢ</label>`;
-    Object.keys(HARAVAN_IDS).forEach(k => {
-        el.innerHTML += `<label class="emp-item"><input type="checkbox" class="emp-chk" value="${k}"> ${HARAVAN_IDS[k].name}</label>`;
-    });
 
     function log(msg, type) { const c = document.getElementById('console'); c.innerHTML += `<div style="color:${type==='err'?'#ff5252':(type==='ok'?'#69f0ae':'#fff')}">[${new Date().toLocaleTimeString()}] ${msg}</div>`; c.scrollTop = c.scrollHeight; }
     document.getElementById('upload').onchange = function() { if(this.files[0]) document.getElementById('file-name').innerText = this.files[0].name; }
@@ -110,11 +104,14 @@
         return g;
     }
 
-    // --- TẠO HTML CLEAN ---
+    // --- TẠO HTML SẠCH (ĐỂ TRÁNH LỖI 500) ---
     function generateCleanHTML(g, mode, note, empId) {
         const timeStr = new Date().toLocaleString('vi-VN');
-        let html = `<span id="meta-date" style="display:none">${timeStr}${note ? ' - ' + note : ''}</span>`;
         
+        // 1. Thẻ Metadata (Để Theme đọc ngày & Note)
+        let html = `<div id="tool-metadata" data-date="${timeStr}" data-note="${note || ''}" style="display:none;"></div>`;
+        
+        // 2. Nội dung bảng giá (Structure đơn giản)
         const renderSection = (list, title, id) => {
             if(!list.length) return "";
             let th = (mode === 'retail') 
@@ -122,7 +119,7 @@
                 : `<th>Tên Sản Phẩm</th><th>VAT 10Kg</th><th>HKD 10Kg</th><th>VAT 50Kg</th><th>HKD 50Kg</th><th>CTV</th><th>Lẻ</th>`;
             
             let rows = list.map(i => {
-                const link = `<br><a href="${i.link}" target="_blank" style="font-weight:normal;font-size:11px;color:#0068ff;text-decoration:none;">👉 Xem sản phẩm</a>`;
+                const link = `<br><a href="${i.link}" target="_blank" style="font-weight:normal;font-size:11px;color:#0068ff;text-decoration:none;">👉 Xem Web</a>`;
                 if(mode==='retail') return `<tr><td>${i.name}${link}</td><td class="price-retail">${i.retail}</td></tr>`;
                 return `<tr><td>${i.name}${link}</td><td class="price-ws">${i.vat10}</td><td class="price-ws">${i.hkd10}</td><td class="price-ws">${i.vat50}</td><td class="price-ws">${i.hkd50}</td><td class="price-ws">${i.ctv}</td><td class="price-ws">${i.retail}</td></tr>`;
             }).join('');
@@ -135,46 +132,23 @@
         html += renderSection(g.meat, "THỊT NHẬP KHẨU", "thit");
         html += renderSection(g.other, "KHÁC", "khac");
 
-        // ZALO FOOTER
+        // 3. Logic Zalo (Chỉ file Tổng mới có footer cố định)
         if (empId === 'general') {
             const items = CONTACTS.map(c => `<a href="https://zalo.me/${c.p}" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png"><span>${c.n}</span></a>`).join('');
-            html += `<div class="footer-general-wrapper">${items}</div>`;
+            html += `<div class="footer-general">${items}</div>`;
         } else {
             const z = ZALO_INFO[empId];
-            html += `<a href="https://zalo.me/${z.p}" target="_blank" class="float-zalo-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png"> ${z.z}</a>`;
+            html += `<a href="https://zalo.me/${z.p}" target="_blank" class="float-btn zalo-single"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png"> Chat Zalo: ${z.z}</a>`;
         }
+        
         return html;
     }
 
-    // --- TẢI FILE TXT ---
-    async function downloadTXT(mode) {
-        const file = document.getElementById('upload').files[0];
-        const checks = Array.from(document.querySelectorAll('.emp-chk:checked'));
-        if(!file || !checks.length) return alert("Chưa chọn file hoặc nhân viên!");
-
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const wb = XLSX.read(e.target.result, {type:'array'});
-            const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval: ""});
-            const groups = processData(data);
-            const note = document.getElementById('update_note').value.trim();
-            
-            const zip = new JSZip();
-            checks.forEach(c => {
-                const html = generateCleanHTML(groups, mode, note, c.value);
-                zip.file(`${mode.toUpperCase()}_${HARAVAN_IDS[c.value].name}.txt`, html);
-            });
-            saveAs(await zip.generateAsync({type:"blob"}), `Code_Haravan_${mode}.zip`);
-            log("Đã tải file TXT!", 'ok');
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
-    // --- UP LÊN HARAVAN ---
+    // --- HÀM CHẠY ---
     async function run(mode) {
         const file = document.getElementById('upload').files[0];
-        const token = document.getElementById('haravan_token').value.trim();
-        const note = document.getElementById('update_note').value.trim();
+        const token = document.getElementById('token').value.trim();
+        const note = document.getElementById('note').value.trim();
         const checks = Array.from(document.querySelectorAll('.emp-chk:checked'));
 
         if(!file || !token || !checks.length) return alert('Thiếu thông tin!');
@@ -185,36 +159,43 @@
             const wb = XLSX.read(e.target.result, {type:'array'});
             const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval: ""});
             const groups = processData(data);
-            const apiPrefix = '/haravan-api';
+            
+            // DÙNG CẦU NỐI PROXY ĐỂ TRÁNH LỖI MẠNG (Failed to fetch)
+            const proxyUrl = 'https://corsproxy.io/?'; 
+            const apiPrefix = 'https://apis.haravan.com';
 
             for(let c of checks) {
-                const info = HARAVAN_IDS[c.value];
+                const info = IDS[c.value];
                 const pageId = info[mode];
-                const htmlContent = generateCleanHTML(groups, mode, note, c.value);
-                
-                log(`Đang xử lý ${info.name}...`);
+                log(`Đang xử lý: ${info.name}...`);
+
+                // Tạo HTML tương ứng cho từng nhân viên (để xử lý Zalo riêng biệt)
+                const cleanHTML = generateCleanHTML(groups, mode, note, c.value);
+
                 try {
-                    // 1. Get Title
-                    const getRes = await fetch(`${apiPrefix}/web/pages/${pageId}.json`, {
+                    // 1. GET TITLE (Qua Proxy)
+                    const getRes = await fetch(proxyUrl + encodeURIComponent(`${apiPrefix}/web/pages/${pageId}.json`), {
                         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
                     });
+                    
                     let title = `Bảng giá ${info.name}`;
                     if(getRes.ok) {
                         const d = await getRes.json();
                         title = d.page.title;
                     }
 
-                    // 2. Put
-                    const putRes = await fetch(`${apiPrefix}/web/pages/${pageId}.json`, {
+                    // 2. UPDATE (Qua Proxy)
+                    const putRes = await fetch(proxyUrl + encodeURIComponent(`${apiPrefix}/web/pages/${pageId}.json`), {
                         method: 'PUT',
                         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ page: { id: pageId, title: title, body_html: htmlContent } })
+                        body: JSON.stringify({ page: { id: pageId, title: title, body_html: cleanHTML } })
                     });
 
                     if(!putRes.ok) throw new Error(await putRes.text());
-                    log(`✅ ${info.name}: Thành công!`, 'ok');
+                    log(`✅ ${info.name}: THÀNH CÔNG!`, 'ok');
+                    
                 } catch(err) {
-                    log(`❌ ${info.name}: Lỗi - ${err.message}`, 'err');
+                    log(`❌ ${info.name}: Lỗi (${err.message})`, 'err');
                 }
             }
             alert("Hoàn tất!");
