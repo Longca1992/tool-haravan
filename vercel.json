@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/haravan-api/:match*",
+      "destination": "https://apis.haravan.com/:match*"
+    }
+  ]
+}
