@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools AI Auto - LongCa (v118 Direct Core)</title>
+    <title>Tools AI Auto - LongCa (v119 Final)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -49,7 +49,7 @@
     
     <div class="card">
         <h2>TOOLS AI AUTO</h2>
-        <h3 class="brand-title">v118 - Direct Core (No Proxy)</h3>
+        <h3 class="brand-title">v119 - Final Proxy Fix</h3>
         
         <div class="form-group">
             <label class="form-label">🔑 HARAVAN TOKEN:</label>
@@ -243,6 +243,7 @@
     }
 
     function generateHTMLFinal(g, emp, mode, dateStr, extraConfig) {
+        // --- CHỈ DÙNG CSS NỘI TUYẾN - TUYỆT ĐỐI KHÔNG DÙNG THẺ STYLE/SCRIPT ---
         const headerColor = (mode === 'retail') ? '#e65100' : '#0056b3';
         const phoneColor = (mode === 'retail') ? '#e65100' : '#0068ff';
 
@@ -257,6 +258,7 @@
             extraNoteHTML = `<span style="color:#d32f2f; margin-left:10px; font-weight:bold;">📢 ${extraConfig.noteContent}</span>`;
         }
 
+        // --- 1. PHẦN TĨNH (STATIC TOP): Chữ đỏ ---
         const topStaticContent = `
         <div style="padding:10px 10px 5px 10px; text-align:center; background:white;">
             <div style="color:#d32f2f; font-weight:900; font-size:15px; text-transform:uppercase; margin-bottom:5px; border: 2px dashed #d32f2f; padding: 5px 10px; display:inline-block; border-radius:8px; background:#ffebee;">
@@ -264,6 +266,8 @@
             </div>
         </div>`;
 
+        // --- 2. PHẦN GHIM (STICKY): Chỉ gồm Ngày giờ & Nội dung ---
+        // Dùng CSS inline cho Sticky
         let stickyStyle = extraConfig.hideSticky ? "" : "position:sticky; top:0; z-index:1000; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);";
         const stickyContent = `
         <div style="${stickyStyle} background:white; border-bottom:1px solid #eee;">
@@ -273,12 +277,14 @@
         </div>
         `;
 
+        // --- 3. DÒNG LƯU Ý NHỎ ---
         const subNote = `
         <div style="text-align:center; padding:5px; background:white;">
             <div style="font-size:11px; color:#78909c; font-style:italic;">⚠️ Giá tham khảo (99%). Liên hệ Sales để có giá chuẩn nhất.</div>
         </div>
         `;
 
+        // --- 4. ZALO FOOTER (SIÊU NHỎ GỌN - 35px) ---
         let zaloButtonHTML = "";
         const zaloIconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png";
         
@@ -403,11 +409,9 @@
                     const token = document.getElementById('haravan_token').value.trim();
                     if (!token) throw new Error("Vui lòng nhập Token API!");
                     
-                    // --- MẤU CHỐT CỐT LÕI V85 ---
-                    // BỎ QUA CÁC KIỂM TRA PROXY, GỌI THẲNG API
-                    // V85 chạy được vì nó gọi trực tiếp nếu không phải netlify
-                    // Nhưng ở đây ta ép buộc gọi trực tiếp luôn cho chắc ăn.
-                    const apiPrefix = 'https://apis.haravan.com';
+                    const isNetlify = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('vercel.app');
+                    // Sử dụng /haravan-api để đi qua Proxy (Netlify/Vercel)
+                    const apiPrefix = isNetlify ? '/haravan-api' : 'https://apis.haravan.com';
 
                     let successCount = 0;
                     let failLog = [];
