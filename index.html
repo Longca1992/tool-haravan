@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools AI Auto - LongCa (v111 Vercel Fix)</title>
+    <title>Tools AI Auto - LongCa (v113 Fix 400 Title)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -49,7 +49,7 @@
     
     <div class="card">
         <h2>TOOLS AI AUTO</h2>
-        <h3 class="brand-title">v111 - Vercel Ready (Clean Core)</h3>
+        <h3 class="brand-title">v113 - Final API Logic</h3>
         
         <div class="form-group">
             <label class="form-label">🔑 HARAVAN TOKEN:</label>
@@ -243,7 +243,7 @@
     }
 
     function generateHTMLFinal(g, emp, mode, dateStr, extraConfig) {
-        // --- 1. CHỈ DÙNG CSS NỘI TUYẾN - TUYỆT ĐỐI KHÔNG DÙNG THẺ STYLE/SCRIPT TRONG HTML KẾT QUẢ ---
+        // --- CHỈ DÙNG CSS NỘI TUYẾN - TUYỆT ĐỐI KHÔNG DÙNG THẺ STYLE/SCRIPT TRONG HTML KẾT QUẢ ---
         const headerColor = (mode === 'retail') ? '#e65100' : '#0056b3';
         const phoneColor = (mode === 'retail') ? '#e65100' : '#0068ff';
 
@@ -258,7 +258,7 @@
             extraNoteHTML = `<span style="color:#d32f2f; margin-left:10px; font-weight:bold;">📢 ${extraConfig.noteContent}</span>`;
         }
 
-        // --- 1. PHẦN TĨNH (STATIC TOP) ---
+        // --- 1. PHẦN TĨNH (STATIC TOP): Chữ đỏ (Trôi đi) ---
         const topStaticContent = `
         <div style="padding:10px 10px 5px 10px; text-align:center; background:white;">
             <div style="color:#d32f2f; font-weight:900; font-size:15px; text-transform:uppercase; margin-bottom:5px; border: 2px dashed #d32f2f; padding: 5px 10px; display:inline-block; border-radius:8px; background:#ffebee;">
@@ -326,7 +326,6 @@
         
         const section = (id, title, data) => data.length ? `<div id="${id}" style="background:#f4f6f8; color:${headerColor}; padding:10px; font-weight:bold; margin:20px 0 5px 0; border-left:4px solid ${headerColor}; scroll-margin-top: 50px;">${title}</div><div style="width:100%; overflow-x:auto; -webkit-overflow-scrolling:touch;"><table style="${tableStyle}">${h}<tbody>${r(data)}</tbody></table></div>` : '';
         
-        // --- KẾT HỢP HTML CUỐI CÙNG (CLEAN HTML - NO SCRIPT) ---
         return `<div id="pricing-tool-wrapper" style="font-family:Arial, sans-serif; padding-bottom: 60px;">
             ${topStaticContent}
             ${stickyContent}
@@ -435,29 +434,43 @@
 
                         while(attempts < maxAttempts && !isSuccess) {
                             try {
-                                // ========== <-- FIXED HARAVAN CALL HERE
-                                const url = `${apiPrefix}/web/pages/${pageId}.json`;
+                                // 1. LẤY THÔNG TIN PAGE HIỆN TẠI (GET)
+                                const getPageUrl = `${apiPrefix}/web/pages/${pageId}.json`;
+                                const pageRes = await fetch(getPageUrl, {
+                                    method: 'GET',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-Haravan-Access-Token': token, // Dùng Header bạn cung cấp
+                                        'Accept': 'application/json'
+                                    }
+                                });
                                 
-                                const response = await fetch(url, {
+                                if (!pageRes.ok) throw new Error("Lỗi lấy thông tin page: " + pageRes.status);
+                                const pageData = await pageRes.json();
+                                const currentTitle = pageData.page?.title || `Bảng giá ${pageId}`;
+                                const currentHandle = pageData.page?.handle;
+
+                                // 2. CHUẨN BỊ BODY (PUT) - CÓ TITLE
+                                const putBody = {
+                                    page: {
+                                        title: currentTitle,        // BẮT BUỘC
+                                        body_html: htmlContent,     // Nội dung mới
+                                    }
+                                };
+                                if (currentHandle) putBody.page.handle = currentHandle;
+
+                                // 3. GỬI LỆNH CẬP NHẬT (PUT)
+                                const response = await fetch(`${apiPrefix}/web/pages/${pageId}.json`, {
                                     method: 'PUT',
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        'X-Haravan-Access-Token': token,
+                                        'X-Haravan-Access-Token': token, // Dùng Header bạn cung cấp
                                         'Accept': 'application/json'
                                     },
-                                    body: JSON.stringify({
-                                        page: {
-                                            body_html: htmlContent
-                                        }
-                                    })
+                                    body: JSON.stringify(putBody)
                                 });
 
-                                if (!response.ok) {
-                                    const errText = await response.text();
-                                    // log chi tiết để debug (cắt dài nếu quá dài)
-                                    throw new Error(`${response.status} - ${errText.slice(0, 200)}`);
-                                }
-                                // ==========
+                                if (!response.ok) { const errText = await response.text(); throw new Error(`${response.status} - ${errText.slice(0, 100)}`); }
                                 isSuccess = true;
                                 successCount++;
                                 log(`✅ ${emp.label}: Thành công!`, 'success');
