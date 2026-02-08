@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tools AI Auto - LongCa (v85 Port to Vercel)</title>
+    <title>Tools AI Auto - LongCa (v121 Fix 400 Logic)</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
 
     <style>
-        /* GIAO DIỆN GIỮ NGUYÊN NHƯ CŨ - KHÔNG CHỈNH SỬA */
+        /* GIỮ NGUYÊN GIAO DIỆN V85 CŨ CỦA BẠN */
         body { font-family: 'Roboto', sans-serif; padding: 30px 20px; text-align: center; background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%); min-height: 100vh; }
         .box { background: white; padding: 30px; border-radius: 20px; max-width: 650px; margin: 0 auto; box-shadow: 0 15px 35px rgba(0,0,0,0.15); border: 1px solid #fff; }
         h2 { color: #0277bd; margin: 0; text-transform: uppercase; font-weight: 900; font-size: 22px; letter-spacing: 1px; }
@@ -89,7 +89,7 @@
             </div>
         </div>
         
-        <div class="update-note">Running on Vercel Mode (Original v85 Logic)</div>
+        <div class="update-note">Update v121: Fix Error 400 (Missing Title Logic)</div>
     </div>
 
 <script>
@@ -325,10 +325,8 @@
                     const token = document.getElementById('haravan_token').value.trim();
                     if (!token) throw new Error("Vui lòng nhập Token API!");
                     
-                    // --- ĐÂY LÀ ĐIỂM SỬA QUAN TRỌNG ĐỂ CHẠY TRÊN VERCEL ---
-                    // Nhận diện Vercel HOẶC Netlify để dùng Proxy
-                    const isProxyEnv = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('vercel.app');
-                    const apiPrefix = isProxyEnv ? '/haravan-api' : 'https://apis.haravan.com';
+                    const isNetlify = window.location.hostname.includes('netlify.app') || window.location.hostname.includes('vercel.app');
+                    const apiPrefix = isNetlify ? '/haravan-api' : 'https://apis.haravan.com';
 
                     let successCount = 0;
                     let failLog = [];
@@ -348,6 +346,24 @@
 
                         try {
                             const url = `${apiPrefix}/web/pages/${pageId}.json`;
+                            
+                            // 1. GET PAGE INFO ĐỂ LẤY TITLE (FIX LỖI 400)
+                            const getRes = await fetch(url, {
+                                method: 'GET',
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`, 
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            
+                            let currentTitle = `Bảng giá ${pageId}`;
+                            if(getRes.ok) {
+                                const pageData = await getRes.json();
+                                if(pageData.page && pageData.page.title) currentTitle = pageData.page.title;
+                            }
+
+                            // 2. PUT UPDATE VỚI TITLE ĐẦY ĐỦ
                             const response = await fetch(url, {
                                 method: 'PUT',
                                 headers: { 
@@ -355,7 +371,7 @@
                                     'Authorization': `Bearer ${token}`,
                                     'Accept': 'application/json'
                                 },
-                                body: JSON.stringify({ page: { id: pageId, body_html: htmlContent } })
+                                body: JSON.stringify({ page: { id: pageId, title: currentTitle, body_html: htmlContent } })
                             });
 
                             if (!response.ok) {
